@@ -8,7 +8,7 @@
  */
 package org.postgresql.core.v3;
 
-import org.brushfire.CustomPostgresPrefix;
+import org.postgresql.brushfire.BrushfireUtils;
 import org.postgresql.core.Field;
 import org.postgresql.core.Oid;
 import org.postgresql.core.ParameterList;
@@ -16,8 +16,6 @@ import org.postgresql.core.Parser;
 import org.postgresql.core.Utils;
 
 import java.lang.ref.PhantomReference;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * V3 Query implementation for a single-statement query.
@@ -29,47 +27,14 @@ import java.lang.reflect.Method;
  */
 class SimpleQuery implements V3Query {
 
-    private static final String CLASS_CURRENT_REQUEST_PATH;
-
-    static {
-        String envPath = System.getProperty("CLASS_CURRENT_REQUEST");
-        CLASS_CURRENT_REQUEST_PATH =  envPath != null ? envPath : "com.rbc.brushfire.framework.CurrentRequest";
-    }
-
     SimpleQuery(String[] fragments, ProtocolConnectionImpl protoConnection)
     {
         String[] strings = unmarkDoubleQuestion(fragments, protoConnection);
         //Load class Current request from brusfhire, name comes from env variable (property)
-        //get amazon req id from thread local
-        String amazonTraceId = getAmazonTraceId();
-        if (amazonTraceId != null) {
-            strings[0] += " /* X-Amzn-Trace-Id:" + amazonTraceId + " */ ";
-        }
+        //comment is - amazon req id from thread local or Thread id if amazon request id is null
+        strings[0] += BrushfireUtils.getPostgresPrefix();
         this.fragments = strings;
         this.protoConnection = protoConnection;
-    }
-
-    @SuppressWarnings("unchecked")
-    private String getAmazonTraceId() {
-        String amazonTraceId = null;
-        try {
-            Class<CustomPostgresPrefix> clazz = (Class<CustomPostgresPrefix>) this.getClass()
-                    .getClassLoader().loadClass(CLASS_CURRENT_REQUEST_PATH);
-            Method get = clazz.getMethod("get");
-            CustomPostgresPrefix currentRequest = (CustomPostgresPrefix) get.invoke(null);
-            if (currentRequest != null) {
-                amazonTraceId = currentRequest.getAmazonTraceId();
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return amazonTraceId;
     }
 
     public ParameterList createParameterList() {

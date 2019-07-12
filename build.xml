@@ -150,7 +150,7 @@
     <artifact:pom id="org.postgresql:postgresql:pom"
                   groupId="${maven.group.id}"
                   artifactId="${maven.artifact.id}"
-                  version="${maven.artifact.version.string}" 
+                  version="${maven.artifact.version.string}"
 		  name="PostgreSQL JDBC Driver"
                   description="${maven.artifact.description} ${jdbc.version.upper}"
                   url="http://jdbc.postgresql.org"
@@ -200,6 +200,16 @@
       </dependency>
 
       <!--
+           Waffle-JNA is used for SSPI authentication support on Windows.  We compile
+           against it on all platforms for consistent builds.
+      -->
+      <dependency groupId="javax.servlet" artifactId="javax.servlet-api"
+                  version="3.0.1" scope="compile" optional="true"/>
+       <dependency groupId="javax.servlet" artifactId="javax.servlet-api"
+                  version="3.0.1" scope="runtime" optional="true"/>
+      <dependency groupId="javax.servlet" artifactId="javax.servlet-api" version="3.0.1"
+                  scope="provided" optional="true"/>
+      <!--
            Re-declare our waffle-jna dependency without excludes for runtime
            bundling use.
       -->
@@ -228,6 +238,13 @@
                         url="${maven.remote.repository.url}"/>
     </artifact:dependencies>
 
+    <!--<artifact:dependencies pathId="dependency.compile.classpath"-->
+    <!--filesetId="dependency.compile.fileset"-->
+    <!--pomRefId="javax.servlet:javax.servlet-api:pom">-->
+    <!--<remoteRepository id="${maven.remote.repository.id}"-->
+    <!--url="${maven.remote.repository.url}"/>-->
+    <!--</artifact:dependencies>-->
+
     <!-- These libraries should be bundled for use at runtime and added to the
          classpath when running tests-->
     <artifact:dependencies pathId="dependency.runtime.classpath"
@@ -236,6 +253,13 @@
       <remoteRepository id="${maven.remote.repository.id}"
                         url="${maven.remote.repository.url}"/>
     </artifact:dependencies>
+
+    <!--<artifact:dependencies pathId="dependency.runtime.classpath"-->
+    <!--filesetId="dependency.runtime.fileset"-->
+    <!--pomRefId="javax.servlet:javax.servlet-api:pom">-->
+    <!--<remoteRepository id="${maven.remote.repository.id}"-->
+    <!--url="${maven.remote.repository.url}"/>-->
+    <!--</artifact:dependencies>-->
 
     <!--
       These are used for test compilation and for test running only. They aren't
@@ -429,7 +453,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
     </echo>
 
     <!--   run wrap task from bnd -->
-    <taskdef resource="aQute/bnd/ant/taskdef.properties" classpathref="dependency.build.classpath"/> 
+    <taskdef resource="aQute/bnd/ant/taskdef.properties" classpathref="dependency.build.classpath"/>
     <bndwrap jars="${artifact.jar.build}" output="${artifact.jar}" definitions="${osgidir}"/>
   </target>
 
@@ -596,7 +620,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
     <condition property="makesslclass" value="org.postgresql.ssl.jdbc4.AbstractJdbc4MakeSSL">
         <equals arg1="${jdbc4any}" arg2="true" />
     </condition>
-	
+
     <!-- Some defaults -->
     <filter token="MAJORVERSION" value="${major}" />
     <filter token="MINORVERSION" value="${minor}" />
@@ -649,7 +673,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
           tofile="${srcdir}/${package}/ssl/MakeSSL.java"
           filtering="yes" />
 
-  <echo message="Configured build for the ${edition} edition driver." />
+    <echo message="Configured build for the ${edition} edition driver." />
   </target>
 
 
@@ -694,11 +718,11 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
   <property name="username" value="test" />
   <!-- Password must be something.  Doesn't matter if trust is used! -->
   <property name="password" value="test" />
-	
-  <property name="privilegedUser" value="postgres"/>	
+
+  <property name="privilegedUser" value="postgres"/>
   <!-- Password must be something.  Doesn't matter if trust is used! -->
-  <property name="privilegedPassword" value=""/>	
-	
+  <property name="privilegedPassword" value=""/>
+
   <property name="preparethreshold" value="5" />
   <property name="loglevel" value="0" />
   <property name="protocolVersion" value="0" />
@@ -708,7 +732,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
        driver build, to ensure we're really testing against the jar we just
        built, and not whatever happens to be in builddir. -->
 
-  <!-- This compiles and builds the test jarfile. -->  
+  <!-- This compiles and builds the test jarfile. -->
   <target name="testjar" depends="snapshot-version, jar">
     <mkdir dir="${builddir}/tests"/>
     <javac srcdir="${srcdir}" destdir="${builddir}/tests" debug="${debug}"
@@ -729,7 +753,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
     </javac>
     <jar jarfile="${jardir}/postgresql-tests.jar" basedir="${builddir}/tests"/>
   </target>
-    
+
   <!-- This actually runs the tests -->
   <target name="runtest" depends="testjar">
     <fail message="Your version of ant doesn't seem to have the junit task available.  I looked for org.apache.tools.ant.taskdefs.optional.junit.JUnitTask, but I couldn't find it." unless="junit.task" />
@@ -738,7 +762,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
 
     <property name="testResultsDir" value="${builddir}/testresults" />
     <mkdir dir="${testResultsDir}" />
- 
+
     <junit failureproperty="test.fail">
       <formatter type="brief" usefile="false"/>
       <formatter type="xml" usefile="true" />
@@ -748,8 +772,8 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
       <sysproperty key="database" value="${database}" />
       <sysproperty key="username" value="${username}" />
       <sysproperty key="password" value="${password}" />
-      <sysproperty key="privilegedUser" value="${privilegedUser}"/>	
-      <sysproperty key="privilegedPassword" value="${privilegedPassword}"/>	
+      <sysproperty key="privilegedUser" value="${privilegedUser}"/>
+      <sysproperty key="privilegedPassword" value="${privilegedPassword}"/>
       <sysproperty key="preparethreshold" value="${preparethreshold}" />
       <sysproperty key="loglevel" value="${loglevel}" />
       <sysproperty key="protocolVersion" value="${protocolVersion}" />
@@ -777,7 +801,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
     </junit>
     <fail if="test.fail" message="Some tests are in failure or error"/>
   </target>
-  
+
   <!-- Build and run the tests. -->
   <target name="test" depends="snapshot-version,testjar,runtest"/>
 
@@ -839,7 +863,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
   <!-- Blah. Can't reference an external XML catalog until Ant 1.6.
        So instead we copy the contents of ${docbook.dtd}/catalog.xml
        here, in the form that Ant's xmlcatalog element wants. -->
-  <xmlcatalog id="docbook-catalog">  
+  <xmlcatalog id="docbook-catalog">
     <dtd publicId="-//OASIS//DTD DocBook XML V4.2//EN"
       location="${docbook.dtd}/docbookx.dtd"/>
     <entity publicId="-//OASIS//DTD DocBook CALS Table Model V4.2//EN"
@@ -847,11 +871,11 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
     <entity publicId="-//OASIS//DTD XML Exchange Table Model 19990315//EN"
       location="${docbook.dtd}/soextblx.dtd"/>
     <entity publicId="-//OASIS//ELEMENTS DocBook Information Pool V4.2//EN"
-      location="${docbook.dtd}/dbpoolx.mod"/>    
+      location="${docbook.dtd}/dbpoolx.mod"/>
     <entity publicId="-//OASIS//ELEMENTS DocBook Document Hierarchy V4.2//EN"
-      location="${docbook.dtd}/dbhierx.mod"/>    
+      location="${docbook.dtd}/dbhierx.mod"/>
     <entity publicId="-//OASIS//ENTITIES DocBook Additional General Entities V4.2//EN"
-      location="${docbook.dtd}/dbgenent.mod"/>    
+      location="${docbook.dtd}/dbgenent.mod"/>
     <entity publicId="-//OASIS//ENTITIES DocBook Notations V4.2//EN"
       location="${docbook.dtd}/dbnotnx.mod"/>
     <entity publicId="-//OASIS//ENTITIES DocBook Character Entities V4.2//EN"
@@ -869,7 +893,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
        error. You'll need to set the java properties http.proxyHost and
        http.proxyPort if you need to go via a proxy to fetch the DTDs.
   -->
-       
+
   <target name="validate-doc" depends="prepare">
     <xmlvalidate warn="true">
       <fileset dir="doc" includes="*.xml"/>
@@ -966,6 +990,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
       <fileset dir="${srcdir}">
         <patternset refid="jdbc.version.src.pattern"/>
         <include name="META-INF/**/*"/>
+        <include name="lib/**"/>;
       </fileset>
     </jar>
   </target>
