@@ -238,13 +238,6 @@
                         url="${maven.remote.repository.url}"/>
     </artifact:dependencies>
 
-    <!--<artifact:dependencies pathId="dependency.compile.classpath"-->
-    <!--filesetId="dependency.compile.fileset"-->
-    <!--pomRefId="javax.servlet:javax.servlet-api:pom">-->
-    <!--<remoteRepository id="${maven.remote.repository.id}"-->
-    <!--url="${maven.remote.repository.url}"/>-->
-    <!--</artifact:dependencies>-->
-
     <!-- These libraries should be bundled for use at runtime and added to the
          classpath when running tests-->
     <artifact:dependencies pathId="dependency.runtime.classpath"
@@ -253,13 +246,6 @@
       <remoteRepository id="${maven.remote.repository.id}"
                         url="${maven.remote.repository.url}"/>
     </artifact:dependencies>
-
-    <!--<artifact:dependencies pathId="dependency.runtime.classpath"-->
-    <!--filesetId="dependency.runtime.fileset"-->
-    <!--pomRefId="javax.servlet:javax.servlet-api:pom">-->
-    <!--<remoteRepository id="${maven.remote.repository.id}"-->
-    <!--url="${maven.remote.repository.url}"/>-->
-    <!--</artifact:dependencies>-->
 
     <!--
       These are used for test compilation and for test running only. They aren't
@@ -673,7 +659,7 @@ Import-Package: javax.sql, javax.transaction.xa, javax.naming, *;resolution:=opt
           tofile="${srcdir}/${package}/ssl/MakeSSL.java"
           filtering="yes" />
 
-    <echo message="Configured build for the ${edition} edition driver." />
+  <echo message="Configured build for the ${edition} edition driver." />
   </target>
 
 

@@ -17,6 +17,8 @@ import org.postgresql.core.Utils;
 
 import java.lang.ref.PhantomReference;
 
+import static org.postgresql.brushfire.BrushfireUtils.COMMENTS_ENABLED;
+
 /**
  * V3 Query implementation for a single-statement query.
  * This also holds the state of any associated server-side
@@ -30,9 +32,11 @@ class SimpleQuery implements V3Query {
     SimpleQuery(String[] fragments, ProtocolConnectionImpl protoConnection)
     {
         String[] strings = unmarkDoubleQuestion(fragments, protoConnection);
-        //Load class Current request from brusfhire, name comes from env variable (property)
-        //comment is - amazon req id from thread local or Thread id if amazon request id is null
-        strings[0] += BrushfireUtils.getPostgresPrefix();
+        if (COMMENTS_ENABLED) {
+            //Load class Current request from brusfhire, name comes from env variable (property)
+            //comment is - amazon req id from thread local or Thread id if amazon request id is null
+            strings[0] += BrushfireUtils.getPostgresPrefix();
+        }
         this.fragments = strings;
         this.protoConnection = protoConnection;
     }
