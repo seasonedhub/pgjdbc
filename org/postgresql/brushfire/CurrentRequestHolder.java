@@ -6,6 +6,6 @@ public interface CurrentRequestHolder {
 
 	HttpServletRequest getServletRequest();
 
-	String getAmazonTraceId();
+	String getPostgresPrefix();
 
 }

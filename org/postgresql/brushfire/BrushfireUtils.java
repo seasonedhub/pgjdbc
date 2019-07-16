@@ -9,8 +9,6 @@ public class BrushfireUtils {
     public static Method GET_CURRENT_REQUEST_METHOD;
 
     private static final String CURRENT_REQUEST_DEFAULT_CLASS_PATH = "com.rbc.brushfire.framework.CurrentRequest";
-    private static final String AMAZON_TEXT_FORMAT = " /* X-Amzn-Trace-Id: %s */";
-    private static final String THREAD_ID_TEXT_FORMAT = " /* Thread id: %s */";
 
     static {
         String commentsEnabled = System.getProperty("COMMENTS_ENABLED");
@@ -41,15 +39,9 @@ public class BrushfireUtils {
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
-
-        return generateComment(holder);
-    }
-
-    private static String generateComment(CurrentRequestHolder holder) {
-        if (holder != null && holder.getAmazonTraceId() != null) {
-            return String.format(AMAZON_TEXT_FORMAT, holder.getAmazonTraceId());
+        if (holder != null) {
+            return holder.getPostgresPrefix();
         }
-        return String.format(THREAD_ID_TEXT_FORMAT, Thread.currentThread().getId());
+        return "";
     }
-
 }
