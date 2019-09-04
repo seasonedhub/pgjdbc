@@ -1,4 +1,4 @@
-package org.postgresql.brushfire;
+package org.postgresql.core.brushfire;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -20,7 +20,7 @@ public class BrushfireUtils {
 
         Class<CurrentRequestHolder> clazz = null;
         try {
-            clazz = (Class<CurrentRequestHolder>) BrushfireUtils.class.getClassLoader()
+            clazz = (Class<CurrentRequestHolder>) Thread.currentThread().getContextClassLoader()
                     .loadClass(classPath);
             GET_CURRENT_REQUEST_METHOD = clazz.getMethod("get");
         } catch (ClassNotFoundException e) {
@@ -31,16 +31,19 @@ public class BrushfireUtils {
     }
 
     public static String getPostgresPrefix() {
+        Object requestObject = null;
         CurrentRequestHolder holder = null;
-        try {
-            holder = (CurrentRequestHolder) GET_CURRENT_REQUEST_METHOD.invoke(null);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        if (holder != null) {
-            return holder.getPostgresPrefix();
+        if (GET_CURRENT_REQUEST_METHOD != null) {
+            try {
+                requestObject = GET_CURRENT_REQUEST_METHOD.invoke(null);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            }
+            if (requestObject != null && requestObject.getClass().isAssignableFrom(CurrentRequestHolder.class)) {
+                return ((CurrentRequestHolder) requestObject).getPostgresPrefix();
+            }
         }
         return "";
     }

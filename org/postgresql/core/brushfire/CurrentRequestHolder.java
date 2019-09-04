@@ -1,4 +1,4 @@
-package org.postgresql.brushfire;
+package org.postgresql.core.brushfire;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -8,7 +8,7 @@
  */
 package org.postgresql.core.v3;
 
-import org.postgresql.brushfire.BrushfireUtils;
+import org.postgresql.core.brushfire.BrushfireUtils;
 import org.postgresql.core.Field;
 import org.postgresql.core.Oid;
 import org.postgresql.core.ParameterList;
@@ -17,7 +17,7 @@ import org.postgresql.core.Utils;
 
 import java.lang.ref.PhantomReference;
 
-import static org.postgresql.brushfire.BrushfireUtils.COMMENTS_ENABLED;
+import static org.postgresql.core.brushfire.BrushfireUtils.COMMENTS_ENABLED;
 
 /**
  * V3 Query implementation for a single-statement query.
