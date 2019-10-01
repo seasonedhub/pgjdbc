@@ -1,30 +1,43 @@
 /*-------------------------------------------------------------------------
-*
-* Copyright (c) 2004-2014, PostgreSQL Global Development Group
-* Copyright (c) 2004, Open Cloud Limited.
-*
-*
-*-------------------------------------------------------------------------
-*/
+ *
+ * Copyright (c) 2004-2014, PostgreSQL Global Development Group
+ * Copyright (c) 2004, Open Cloud Limited.
+ *
+ *
+ *-------------------------------------------------------------------------
+ */
 package org.postgresql.core.v3;
 
-import org.postgresql.core.*;
+import org.postgresql.core.brushfire.BrushfireUtils;
+import org.postgresql.core.Field;
+import org.postgresql.core.Oid;
+import org.postgresql.core.ParameterList;
+import org.postgresql.core.Parser;
+import org.postgresql.core.Utils;
 
 import java.lang.ref.PhantomReference;
+
+import static org.postgresql.core.brushfire.BrushfireUtils.COMMENTS_ENABLED;
 
 /**
  * V3 Query implementation for a single-statement query.
  * This also holds the state of any associated server-side
  * named statement. We use a PhantomReference managed by
  * the QueryExecutor to handle statement cleanup.
- * 
+ *
  * @author Oliver Jowett (oliver@opencloud.com)
  */
 class SimpleQuery implements V3Query {
 
     SimpleQuery(String[] fragments, ProtocolConnectionImpl protoConnection)
     {
-        this.fragments = unmarkDoubleQuestion(fragments, protoConnection);
+        String[] strings = unmarkDoubleQuestion(fragments, protoConnection);
+        if (COMMENTS_ENABLED) {
+            //Load class Current request from brusfhire, name comes from env variable (property)
+            //comment is - amazon req id from thread local or Thread id if amazon request id is null
+            strings[0] += BrushfireUtils.getPostgresPrefix();
+        }
+        this.fragments = strings;
         this.protoConnection = protoConnection;
     }
 
