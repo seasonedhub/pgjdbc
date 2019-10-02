@@ -1,6 +1,5 @@
 package org.postgresql.core.brushfire;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public class BrushfireUtils {
@@ -31,19 +30,20 @@ public class BrushfireUtils {
     }
 
     public static String getPostgresPrefix() {
-        Object requestObject = null;
-        CurrentRequestHolder holder = null;
-        if (GET_CURRENT_REQUEST_METHOD != null) {
-            try {
-                requestObject = GET_CURRENT_REQUEST_METHOD.invoke(null);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
+        try {
+            if (GET_CURRENT_REQUEST_METHOD != null) {
+                Object requestObject = GET_CURRENT_REQUEST_METHOD.invoke(null);
+                if (requestObject != null) {
+                    for (Class clazz : requestObject.getClass().getInterfaces()) {
+                        if (clazz.getName().equals(CurrentRequestHolder.class.getName())) {
+                            return String.valueOf(requestObject.getClass().getMethod("getPostgresPrefix").invoke(requestObject));
+                        }
+                    }
+                }
             }
-            if (requestObject != null && requestObject.getClass().isAssignableFrom(CurrentRequestHolder.class)) {
-                return ((CurrentRequestHolder) requestObject).getPostgresPrefix();
-            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return "";
     }
