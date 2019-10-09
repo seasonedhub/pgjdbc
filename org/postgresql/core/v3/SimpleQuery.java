@@ -18,6 +18,7 @@ import org.postgresql.core.Utils;
 import java.lang.ref.PhantomReference;
 
 import static org.postgresql.core.brushfire.BrushfireUtils.COMMENTS_ENABLED;
+import static org.postgresql.core.brushfire.BrushfireUtils.validateComment;
 
 /**
  * V3 Query implementation for a single-statement query.
@@ -29,13 +30,17 @@ import static org.postgresql.core.brushfire.BrushfireUtils.COMMENTS_ENABLED;
  */
 class SimpleQuery implements V3Query {
 
+    public static final CharSequence[] EVIL_CHARS = {"/", "*"};
+
     SimpleQuery(String[] fragments, ProtocolConnectionImpl protoConnection)
     {
         String[] strings = unmarkDoubleQuestion(fragments, protoConnection);
         if (COMMENTS_ENABLED) {
             //Load class Current request from brusfhire, name comes from env variable (property)
             //comment is - amazon req id from thread local or Thread id if amazon request id is null
-            strings[0] += BrushfireUtils.getPostgresPrefix();
+            String sqlComment = BrushfireUtils.getPostgresPrefix();
+            validateComment(sqlComment);
+            strings[0] = sqlComment + strings[0];
         }
         this.fragments = strings;
         this.protoConnection = protoConnection;
