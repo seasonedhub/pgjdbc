@@ -1,7 +1,5 @@
 package org.postgresql.core.brushfire;
 
-import org.postgresql.core.SqlInjectionException;
-
 import java.lang.reflect.Method;
 
 public class BrushfireUtils {
@@ -10,7 +8,6 @@ public class BrushfireUtils {
     public static Method GET_CURRENT_REQUEST_METHOD;
 
     private static final String CURRENT_REQUEST_DEFAULT_CLASS_PATH = "com.rbc.brushfire.framework.CurrentRequest";
-    private static final CharSequence[] EVIL_CHARS = {"/", "*"};
 
     static {
         String commentsEnabled = System.getProperty("COMMENTS_ENABLED");
@@ -50,13 +47,4 @@ public class BrushfireUtils {
         }
         return "";
     }
-
-    public static void validateComment(String sqlComment) {
-        for (CharSequence c : EVIL_CHARS) {
-            if (sqlComment.contains(c)) {
-                throw new SqlInjectionException("Threat comment is detected! Somebody tried to make sql injection!");
-            }
-        }
-    }
-
 }
