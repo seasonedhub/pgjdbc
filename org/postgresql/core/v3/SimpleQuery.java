@@ -35,7 +35,7 @@ class SimpleQuery implements V3Query {
         if (COMMENTS_ENABLED) {
             //Load class Current request from brusfhire, name comes from env variable (property)
             //comment is - amazon req id from thread local or Thread id if amazon request id is null
-            strings[0] += BrushfireUtils.getPostgresPrefix();
+            strings[0] = BrushfireUtils.getPostgresPrefix() + strings[0];
         }
         this.fragments = strings;
         this.protoConnection = protoConnection;
